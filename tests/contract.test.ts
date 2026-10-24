@@ -43,7 +43,7 @@ function resolve(spec: Json, schema: Json): Json {
 }
 
 // [spec, schema, our schema, spec properties deliberately not modelled]
-// totalAmount: listed as required but never defined (BancontactPro.Net#28). voucherEligibility: deprecated.
+// totalAmount: listed as required but never defined (BancontactPro.Net#4). voucherEligibility: deprecated.
 const MODELS: [keyof typeof VERSIONS, string, AnySchema, string[]][] = [
   ['merchant-payment', 'payment_create_request', models.createPaymentRequestSchema, ['voucherEligibility']],
   ['merchant-payment', 'static_qr_payment_create_request', models.createStaticQrPaymentRequestSchema, ['voucherEligibility']],
