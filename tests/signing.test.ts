@@ -77,6 +77,28 @@ describe('BancontactSignatureVerifier', () => {
     expect(await wrong.verify(jws, body, '/callback')).toBeUndefined();
   });
 
+  it.each([
+    ['https://shop.example/callback', '/callback', true],
+    ['http://shop.example/callback', '/callback', true],
+    ['https://shop.example/other', '/callback', false],
+    ['ftp://shop.example/callback', '/callback', false],
+    ['/callback', '/callback', true],
+  ])('treats the path claim %s against %s as %s', async (claim, received, expected) => {
+    const jws = sign({ ...HEADER, path: claim }, body, key.privateKey);
+    expect((await verifier.verify(jws, body, received)) !== undefined).toBe(expected);
+  });
+
+  it('verifies a real preprod callback', async () => {
+    // Captured from Bancontact's preprod on 2026-10-24 and checked with the public key of https://jwks.preprod.bancontact.net/ :
+    // header..signature, a path claim that is the callback URL, signing input header + '.' + base64url(body).
+    const publicKey = jwkToPublicKey({ kty: 'EC', crv: 'P-256', x: 'QXagknFz-0HTQGL-jISbuOdPFP4561SmbmHm2y14HEg', y: '0XJYHdztagEf-qFj1_lnE1HAqp5LkMDskW4hbhnKiII' });
+    const real = new BancontactSignatureVerifier(jwks({ 'c30f414d-855f-4791-975d-f6d9f3d23e42': publicKey as typeof key.publicKey }));
+    const signature = 'eyJjcml0IjpbImh0dHBzOi8vcGF5Y29uaXEuY29tL2lzcyIsImh0dHBzOi8vcGF5Y29uaXEuY29tL2lhdCIsImh0dHBzOi8vcGF5Y29uaXEuY29tL3N1YiIsImh0dHBzOi8vcGF5Y29uaXEuY29tL3BhdGgiLCJodHRwczovL3BheWNvbmlxLmNvbS9qdGkiXSwiaHR0cHM6Ly9wYXljb25pcS5jb20vaXNzIjoiUGF5Y29uaXEiLCJraWQiOiJjMzBmNDE0ZC04NTVmLTQ3OTEtOTc1ZC1mNmQ5ZjNkMjNlNDIiLCJodHRwczovL3BheWNvbmlxLmNvbS9pYXQiOiIyMDI2LTEwLTI0VDIyOjI1OjIzLjE4NVoiLCJ0eXAiOiJKT1NFK0pTT04iLCJodHRwczovL3BheWNvbmlxLmNvbS9zdWIiOiI3eGt5ZGpiYzluZ2dzeWtjZzVzaDBhYnMiLCJodHRwczovL3BheWNvbmlxLmNvbS9wYXRoIjoiaHR0cHM6Ly9iYW5jb250YWN0LXByZXByb2Qub3MtbGFuLmJlL2JhbmNvbnRhY3QvY2FsbGJhY2siLCJodHRwczovL3BheWNvbmlxLmNvbS9qdGkiOiI4MTM4OWVhNS1lZDRlLTQyZTMtODkwYy0xNjExMjkyZWNiOTYiLCJhbGciOiJFUzI1NiJ9..rqZVQYddn67bBOG7iej3jAYwMpT-6R3mI_Ar7npJwHfYLd8iGmKw62on21guVo9XGveBJBd8ApVGPTcZSr78Hg';
+    const payload = Buffer.from('{"paymentId":"tx668ldrz9fgg4ararakc62r","currency":"EUR","amount":100,"createdAt":"2026-10-24T22:08:10.040086Z","status":"SUCCEEDED","debtor":{"iban":"************7034","name":"Axel Dewaele"},"description":"sample payment","expireAt":"2026-10-24T22:10:10.040086Z","succeededAt":"2026-10-24T22:08:28.514776Z"}');
+    const claims = await real.verify(signature, payload, '/bancontact/callback');
+    expect(claims?.issuer).toBe('Payconiq');
+    expect(claims?.requestId).toBe('81389ea5-ed4e-42e3-890c-1611292ecb96');
+  });
   it('rejects an unrecognised critical extension', async () => {
     const jws = sign(HEADER, body, key.privateKey);
     const [head, , signature] = jws.split('.') as [string, string, string];

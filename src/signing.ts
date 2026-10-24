@@ -111,6 +111,23 @@ export interface JwksKeySource {
 }
 
 /**
+ * Whether the signed `path` claim names the endpoint that received the callback. The docs call the claim a path, but Bancontact
+ * signs the callback URL the merchant registered (observed on a real preprod callback: `https://host/bancontact/callback`), so
+ * a claim that is an absolute http(s) URL matches when its path equals the received path. A plain path is compared as it is.
+ * The host is not compared: an application behind a proxy cannot rely on the host it sees, and the path is what stops a
+ * callback for one endpoint being replayed to another.
+ */
+function signedPathMatches(claim: string, path: string): boolean {
+  if (claim === path) return true;
+  try {
+    const url = new URL(claim);
+    return (url.protocol === 'https:' || url.protocol === 'http:') && url.pathname === path;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Verifies an inbound detached JWS and its structural policy: `crit`, `path` and `iat`.
  *
  * Returns the parsed claims on success and `undefined` on any failure: malformed or malicious inbound data is an
@@ -131,7 +148,7 @@ export class BancontactSignatureVerifier {
     if (claims.crit.length !== CRIT.length || !claims.crit.every((c) => CRIT.includes(c))) return undefined;
 
     // Defends against a validly signed message being replayed against the wrong route.
-    if (claims.path !== path) return undefined;
+    if (!signedPathMatches(claims.path, path)) return undefined;
 
     let signature: Buffer;
     try {
