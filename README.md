@@ -4,7 +4,7 @@
 
 Een TypeScript-client voor de [Bancontact Pro](https://docs.bancontactpro.com/)-API's: Payment, Refund en Reconciliation, met request-signing, verificatie van callbacks via JWKS en QR-/deeplinkgeneratie. Geen runtime-afhankelijkheden: enkel `node:crypto` en `fetch`.
 
-> **Status: in ontwikkeling, nog niet gepubliceerd en nog niet getest tegen Bancontact zelf.** Alles is getest met gemockte HTTP. Het pakket staat nog niet op npm en de naam `@dewall88/bancontactpro` is nog niet gereserveerd. De bibliotheek is gebouwd op de documentatie en specs van Bancontact, niet als port van een andere taalversie.
+> **Status: in ontwikkeling, nog niet gepubliceerd en nog niet getest tegen Bancontact zelf.** Alles is getest met gemockte HTTP. Het pakket staat nog niet op npm en de naam `@yvebrecht/bancontactpro` is nog niet gereserveerd. De bibliotheek is gebouwd op de documentatie en specs van Bancontact, niet als port van een andere taalversie.
 
 ## Vereisten
 
@@ -15,7 +15,7 @@ Node.js 20 of hoger (ESM). Strikte TypeScript-types worden meegeleverd.
 Bancontact geeft per producttype (On a Display, On a Receipt, Static QR, Top Up) een API-key en een PPID. Refund- en Reconciliation-aanvragen moeten bovendien ondertekend worden met jouw eigen ES256-sleutel (P-256); de publieke sleutel host je als JWKS en deel je met Bancontact (`toPublicJwkJson` maakt die JWK). Voor de Payment-API volstaat de API-key.
 
 ```ts
-import { BancontactClientFactory, BancontactEnvironment, BancontactProduct } from '@dewall88/bancontactpro';
+import { BancontactClientFactory, BancontactEnvironment, BancontactProduct } from '@yvebrecht/bancontactpro';
 import { readFileSync } from 'node:fs';
 
 const factory = new BancontactClientFactory({
@@ -55,7 +55,7 @@ await payments.createStaticQrPayment({ amount: 1000, posId: 'POS00001' });
 Geen API-call; zie [examples/qr.ts](examples/qr.ts), de [receipt-gids](https://docs.bancontactpro.com/guides/instore/receipt052025v4) en de [top-up-gids](https://docs.bancontactpro.com/guides/online/topup052025v4).
 
 ```ts
-import { BancontactEnvironment, qr } from '@dewall88/bancontactpro';
+import { BancontactEnvironment, qr } from '@yvebrecht/bancontactpro';
 
 const payload = qr.buildFixedAmountPaymentUrl(BancontactEnvironment.Production, ppid, { amountCents: 1000, description: 'Kassabon' });
 const imageUrl = qr.buildQrCodeImageUrl(BancontactEnvironment.Production, payload);

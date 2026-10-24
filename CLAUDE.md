@@ -14,7 +14,7 @@ Werk met `claude --add-dir ../BancontactPro.Net` om de .NET-code te kunnen lezen
 ## Ontwerp
 
 - Strikte TypeScript (`strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`), ESM, Node.js >= 20 (CI: 20, 22, 24), `async`/`await`, `camelCase`. Fouten zijn `Error`-subklassen in `errors.ts`.
-- Pakketnaam: `@dewall88/bancontactpro` (nog niet gereserveerd).
+- Pakketnaam: `@yvebrecht/bancontactpro` (nog niet gereserveerd).
 - Versie: major.minor loopt gelijk met alle taalversies (nu 0.2); patch en prerelease-deel zijn vrij per taal. SemVer-formaat `0.2.0-preview.1`, enige bron `src/version.ts` (een test houdt `package.json` gelijk); git-tags `v0.2.0-preview.1`.
 - **Geen runtime-afhankelijkheden.** `node:crypto` doet ES256 (raw `r || s`) en JWK-import; de globale `fetch` is de HTTP-client en is injecteerbaar. Dit wijkt af van het idee in de issues om `jose` te gebruiken: `jose` kan de eigen `crit`/`path`/`iat`-regels en de cache-regels niet vervangen, dus het zou enkel een extra afhankelijkheid zijn.
 - Modellen zijn interfaces; `src/schema.ts` beschrijft ze tijdens runtime (parsen, verplichte velden, datums naar `Date`) en voedt de contracttests. Wire-namen = eigenschapsnamen, ook `_links`. Ongezette optionele velden worden weggelaten, nooit als `null` verstuurd. Een expliciete `null` in een antwoord geldt als afwezig.
