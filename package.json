@@ -1,0 +1,41 @@
+{
+  "name": "@dewall88/bancontactpro",
+  "version": "0.2.0-preview.1",
+  "description": "Unofficial TypeScript client for the Bancontact Pro payment, refund and reconciliation APIs. Provisional notice: the provider only supplies this SDK as a library; it is not a software vendor, a payment service provider or a partner of Bancontact.",
+  "keywords": ["bancontact", "bancontact-pro", "payment", "refund", "reconciliation", "qr"],
+  "license": "Apache-2.0",
+  "author": "DeWall88",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yvebrecht/BancontactPro.TypeScript.git"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=20"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": ["dist", "LICENSE", "NOTICE", "README.md"],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . && tsc --noEmit",
+    "test": "vitest run",
+    "check": "npm run lint && npm test && npm run build"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "@types/node": "^22.0.0",
+    "eslint": "^9.0.0",
+    "typescript": "^5.6.0",
+    "typescript-eslint": "^8.0.0",
+    "vitest": "^3.0.0"
+  }
+}
