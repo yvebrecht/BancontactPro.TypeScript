@@ -1,10 +1,10 @@
 {
-  "name": "@dewall88/bancontactpro",
+  "name": "@yvebrecht/bancontactpro",
   "version": "0.2.0-preview.1",
   "description": "Unofficial TypeScript client for the Bancontact Pro payment, refund and reconciliation APIs. Provisional notice: the provider only supplies this SDK as a library; it is not a software vendor, a payment service provider or a partner of Bancontact.",
   "keywords": ["bancontact", "bancontact-pro", "payment", "refund", "reconciliation", "qr"],
   "license": "Apache-2.0",
-  "author": "DeWall88",
+  "author": "Axel Dewaele",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yvebrecht/BancontactPro.TypeScript.git"
